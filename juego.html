@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cartón de Bingo - Juego en Vivo</title>
+    <style>
+        :root {
+            --primary-blue: #1d3557;
+            --accent-gold: #ffb703;
+            --accent-red: #e63946;
+            --bg-light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--primary-blue);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .header h1 {
+            color: var(--accent-gold);
+            margin: 0;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Estilo para los números que van saliendo */
+        .bolas-historial {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .bola-pequena {
+            background: white;
+            color: var(--primary-blue);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border: 2px solid var(--accent-gold);
+            animation: pop 0.3s ease-out;
+        }
+
+        /* --- CONTENEDOR HORIZONTAL --- */
+        #cartones-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .carton-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 4px solid var(--accent-gold);
+            width: 100%;
+            max-width: 350px; 
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .info-jugador {
+            background: var(--primary-blue);
+            padding: 8px;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        .info-jugador .nombre {
+            display: block;
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            user-select: none;
+        }
+
+        th {
+            background: var(--accent-red);
+            color: white;
+            font-size: 1.2rem;
+            padding: 8px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        td {
+            height: 55px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--primary-blue);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        td.marcada {
+            background-color: var(--accent-gold);
+            color: var(--primary-blue);
+            transform: scale(0.9);
+            border-radius: 12px;
+        }
+
+        td.free {
+            background-color: var(--primary-blue);
+            color: var(--accent-gold);
+        }
+
+        @keyframes pop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>BINGO DIGITAL</h1>
+        
+        <div id="guia-container"></div>
+        
+        <div id="numeros-cantados-container" class="bolas-historial"></div>
+        
+        <p style="margin: 10px 0; font-size: 0.8rem; opacity: 0.8;">Toca los números para marcarlos</p>
+    </div>
+
+    <div id="cartones-container"></div>
+
+    <script src="juego.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAOHYo0w41dV6TRarAaGt58Zxn4o47dNUE",
+    authDomain: "bingofast.firebaseapp.com",
+    projectId: "bingofast",
+    storageBucket: "bingofast.firebasestorage.app",
+    messagingSenderId: "473863283329",
+    appId: "1:473863283329:web:2c4bf96de167d105fa6380",
+    measurementId: "G-Z7VH6JYV4D"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // LLAMA A ESTA FUNCIÓN DENTRO DE TU BOTÓN DE SORTEAR
+  function mandarNumeroAlJuego(numero) {
+    const letra = numero <= 15 ? 'B' : numero <= 30 ? 'I' : numero <= 45 ? 'N' : numero <= 60 ? 'G' : 'O';
+    
+    db.ref('partidaActual').set({
+      numero: numero,
+      letra: letra,
+      timestamp: Date.now()
+    });
+  }
+</script>
+</body>
+</html>
